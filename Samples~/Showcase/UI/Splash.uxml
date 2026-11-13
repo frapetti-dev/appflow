@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement class="screen bg--grape">
+        <ui:VisualElement class="blob blob--a" />
+        <ui:VisualElement class="blob blob--b" />
+        <ui:VisualElement class="row">
+            <ui:Label text="A" class="title stagger logo-letter" />
+            <ui:Label text="p" class="title stagger logo-letter" />
+            <ui:Label text="p" class="title stagger logo-letter" />
+            <ui:Label text="F" class="title stagger logo-letter" />
+            <ui:Label text="l" class="title stagger logo-letter" />
+            <ui:Label text="o" class="title stagger logo-letter" />
+            <ui:Label text="w" class="title stagger logo-letter" />
+        </ui:VisualElement>
+        <ui:Label text="a state machine for your app" class="stagger body-text" style="color: #FFF8E7;" />
+        <ui:Label text="click to skip" class="hint" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,25 @@
+{
+    "name": "AppFlow.Pipeline",
+    "rootNamespace": "AppFlow",
+    "references": [
+        "AppFlow.Runtime",
+        "Unity.Pipeline.Attributes"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "APPFLOW_PIPELINE"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.pipeline",
+            "expression": "",
+            "define": "APPFLOW_PIPELINE"
+        }
+    ],
+    "noEngineReferences": false
+}

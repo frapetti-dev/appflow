@@ -1,0 +1,25 @@
+{
+    "name": "AppFlow.UniTask",
+    "rootNamespace": "AppFlow",
+    "references": [
+        "AppFlow.Runtime",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "APPFLOW_UNITASK"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.cysharp.unitask",
+            "expression": "",
+            "define": "APPFLOW_UNITASK"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement class="screen bg--sky">
+        <ui:VisualElement class="blob blob--a" />
+        <ui:VisualElement class="blob blob--b" />
+        <ui:VisualElement class="blob blob--c" />
+        <ui:Label text="AppFlow" class="title" />
+        <ui:Label text="Playground" class="subtitle" />
+        <ui:VisualElement class="col">
+            <ui:Button name="play" text="Play" class="btn btn--coral stagger" />
+            <ui:Button name="settings" text="Settings" class="btn btn--grape stagger" />
+            <ui:Button name="credits" text="Credits" class="btn btn--sunshine stagger" />
+            <ui:Button name="quit" text="Quit" class="btn btn--ink stagger" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement class="screen game bg--sky">
+        <ui:VisualElement name="sun" class="sun" />
+        <ui:VisualElement name="clouds" class="clouds">
+            <ui:VisualElement class="cloud" style="left: 8%; top: 40px;" />
+            <ui:VisualElement class="cloud" style="left: 30%; top: 150px; width: 200px;" />
+            <ui:VisualElement class="cloud" style="left: 45%; top: 20px; width: 300px;" />
+            <ui:VisualElement class="cloud" style="left: 58%; top: 40px;" />
+            <ui:VisualElement class="cloud" style="left: 80%; top: 150px; width: 200px;" />
+            <ui:VisualElement class="cloud" style="left: 95%; top: 20px; width: 300px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="hills" class="hills">
+            <ui:VisualElement class="hill" style="left: -10%; bottom: -160px; width: 60%; height: 360px;" />
+            <ui:VisualElement class="hill" style="left: 40%; bottom: -200px; width: 70%; height: 340px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="hero" class="hero">
+            <ui:VisualElement class="eye eye--l"><ui:VisualElement class="pupil" /></ui:VisualElement>
+            <ui:VisualElement class="eye eye--r"><ui:VisualElement class="pupil" /></ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label name="score" class="score" text="Score 0" />
+        <ui:Button name="pause" text="II" class="btn btn--sunshine btn--round pause-btn" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,173 @@
+/* The default runtime theme is not used, so size the UIDocument roots ourselves. */
+.unity-ui-document__root { position: absolute; left: 0; top: 0; right: 0; bottom: 0; flex-grow: 1; }
+TemplateContainer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+
+/* AppFlow sample: playful cartoony style. Palette: ink #2B2D42, cream #FFF8E7, sky #6EC6FF, sunshine #FFD23F, coral #FF6B6B, mint #3DDC97, grape #7B5CFA */
+
+.screen {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    -unity-font: url("Fonts/Fredoka-SemiBold.ttf");
+    color: #FFFFFF;
+    font-size: 40px;
+    transition-property: opacity, scale, translate;
+    transition-duration: 0.45s;
+    transition-timing-function: ease-out-back;
+}
+
+.overlay { -unity-font: url("Fonts/Fredoka-SemiBold.ttf"); }
+.body-text { -unity-font: url("Fonts/Fredoka-Regular.ttf"); font-size: 36px; color: #2B2D42; }
+
+.bg--grape { background-color: #7B5CFA; }
+.bg--sky { background-color: #6EC6FF; }
+.bg--mint { background-color: #3DDC97; }
+.bg--sunshine { background-color: #FFD23F; }
+
+.off-pop { opacity: 0; scale: 0.6 0.6; }
+.off-left { translate: -110% 0; }
+.off-right { translate: 110% 0; }
+
+.stagger--off { opacity: 0; translate: 0 60px; }
+
+.title {
+    font-size: 140px;
+    color: #FFFFFF;
+    -unity-text-outline-width: 6px;
+    -unity-text-outline-color: #2B2D42;
+    -unity-text-align: middle-center;
+}
+.subtitle { font-size: 56px; color: #2B2D42; margin-bottom: 40px; }
+.hint { font-size: 28px; color: #FFF8E7; margin-top: 24px; -unity-font: url("Fonts/Fredoka-Regular.ttf"); }
+.row { flex-direction: row; align-items: center; justify-content: center; }
+.col { align-items: center; justify-content: center; }
+
+.btn {
+    -unity-font: url("Fonts/Fredoka-SemiBold.ttf");
+    font-size: 44px;
+    color: #FFFFFF;
+    border-radius: 28px;
+    padding: 18px 56px;
+    margin: 10px;
+    min-width: 380px;
+    border-width: 0 0 10px 0;
+    border-color: #000000;
+    background-color: #888888;
+    transition-property: scale, rotate, translate, border-bottom-width;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-back;
+}
+.btn:hover { scale: 1.08 1.08; rotate: -2deg; }
+.btn:active { translate: 0 6px; border-bottom-width: 4px; }
+.btn--coral { background-color: #FF6B6B; border-color: #BF4F4F; }
+.btn--grape { background-color: #7B5CFA; border-color: #5C45BB; }
+.btn--sunshine { background-color: #FFD23F; border-color: #BF9D2F; color: #2B2D42; }
+.btn--mint { background-color: #3DDC97; border-color: #2DA571; }
+.btn--ink { background-color: #2B2D42; border-color: #202231; }
+.btn--round { min-width: 110px; width: 110px; height: 110px; padding: 0; border-radius: 55px; -unity-text-align: middle-center; }
+
+.pill {
+    -unity-font: url("Fonts/Fredoka-SemiBold.ttf");
+    font-size: 32px;
+    color: #2B2D42;
+    background-color: #FFF8E7;
+    border-radius: 22px;
+    padding: 10px 28px;
+    margin: 6px;
+    border-width: 0 0 6px 0;
+    border-color: #C9C2AD;
+    transition-property: scale, background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-back;
+}
+.pill:hover { scale: 1.06 1.06; }
+.pill--on { background-color: #2B2D42; color: #FFFFFF; border-color: #111220; scale: 1.05 1.05; }
+.setting-label { font-size: 40px; color: #2B2D42; min-width: 260px; }
+
+/* After .btn/.pill so stagger items (buttons) keep their hover transitions. ScreenView overrides duration/delay inline while showing. */
+.stagger {
+    transition-property: opacity, translate, scale, rotate, border-bottom-width, background-color;
+    transition-duration: 0.4s, 0.4s, 0.15s, 0.15s, 0.15s, 0.15s;
+    transition-timing-function: ease-out-back;
+}
+
+.blob { position: absolute; border-radius: 50%; background-color: rgba(255, 255, 255, 0.2); }
+.blob--a { left: -120px; top: -120px; width: 480px; height: 480px; }
+.blob--b { right: -80px; bottom: -160px; width: 560px; height: 560px; }
+.blob--c { right: 240px; top: 120px; width: 160px; height: 160px; }
+
+.logo-letter { margin: 0 4px; }
+
+/* Pause */
+.backdrop { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(43, 45, 66, 0.6); }
+.card {
+    background-color: #FFF8E7;
+    border-radius: 40px;
+    border-width: 0 0 14px 0;
+    border-color: #C9C2AD;
+    padding: 40px 80px;
+    rotate: -2deg;
+    align-items: center;
+}
+.card .title { font-size: 110px; margin-bottom: 20px; }
+
+/* Game */
+.game { transition-property: opacity, scale, translate; transition-duration: 0.3s; }
+.game--frozen { scale: 0.94 0.94; opacity: 0.7; }
+.sun { position: absolute; left: 160px; top: 100px; width: 200px; height: 200px; border-radius: 100px; background-color: #FFD23F; border-width: 0 0 10px 0; border-color: #BF9D2F; }
+.clouds { position: absolute; left: 0; top: 60px; width: 200%; height: 300px; }
+.cloud { position: absolute; background-color: #FFFFFF; border-radius: 60px; height: 100px; width: 260px; }
+.hills { position: absolute; left: 0; right: 0; bottom: 0; height: 280px; }
+.hill { position: absolute; background-color: #3DDC97; border-radius: 50%; border-width: 8px 0 0 0; border-color: #2DA571; }
+.hero { position: absolute; left: 50%; bottom: 260px; width: 150px; height: 150px; margin-left: -75px; border-radius: 75px; background-color: #FF6B6B; border-width: 0 0 10px 0; border-color: #BF4F4F; }
+.eye { position: absolute; top: 40px; width: 44px; height: 44px; border-radius: 22px; background-color: #FFFFFF; }
+.eye--l { left: 28px; }
+.eye--r { right: 28px; }
+.pupil { position: absolute; left: 20px; top: 14px; width: 18px; height: 18px; border-radius: 9px; background-color: #2B2D42; }
+.coin {
+    position: absolute; width: 64px; height: 64px; border-radius: 32px;
+    background-color: #FFD23F; border-width: 0 0 6px 0; border-color: #BF9D2F;
+    transition-property: opacity, translate; transition-duration: 0.6s; transition-timing-function: ease-out;
+}
+.coin--pop { opacity: 0; translate: 0 -160px; }
+.score { position: absolute; left: 48px; top: 36px; font-size: 64px; color: #FFFFFF; -unity-text-outline-width: 4px; -unity-text-outline-color: #2B2D42; }
+.pause-btn { position: absolute; left: 48px; top: 130px; min-width: 110px; margin: 0; }
+
+/* Overlay: curtain */
+.curtain {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background-color: #7B5CFA;
+    align-items: center; justify-content: center;
+    transition-property: translate;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out-bounce;
+}
+.curtain--up { translate: 0 -105%; }
+.curtain-label { font-size: 96px; color: #FFFFFF; -unity-text-outline-width: 5px; -unity-text-outline-color: #2B2D42; margin-bottom: 40px; }
+.curtain-track { width: 720px; height: 44px; border-radius: 22px; background-color: rgba(43, 45, 66, 0.5); overflow: hidden; }
+.curtain-fill { width: 0; height: 100%; border-radius: 22px; background-color: #FFD23F; }
+
+/* Overlay: HUD */
+.hud {
+    position: absolute; right: 24px; top: 24px; width: 420px;
+    background-color: #FFF8E7; border-radius: 24px; padding: 16px 22px;
+    border-width: 0 0 8px 0; border-color: #C9C2AD;
+    color: #2B2D42; font-size: 26px;
+}
+.hud Label { color: #2B2D42; font-size: 26px; }
+.hud-row { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.hud .hud-state { font-size: 40px; }
+.hud .hud-phase { color: #FFFFFF; border-radius: 14px; padding: 2px 14px; background-color: #888888; }
+.hud .phase--PreEnter, .hud .phase--PreExit { background-color: #FFD23F; color: #2B2D42; }
+.hud .phase--Enter, .hud .phase--Exit { background-color: #FF6B6B; }
+.hud .phase--PostEnter, .hud .phase--PostExit { background-color: #7B5CFA; }
+.hud .phase--Running { background-color: #3DDC97; }
+.hud .hud-edge { font-size: 22px; -unity-font: url("Fonts/Fredoka-Regular.ttf"); margin-bottom: 8px; white-space: normal; }
+.hud-log { margin-bottom: 6px; }
+.hud .hud-log-row { font-size: 20px; -unity-font: url("Fonts/Fredoka-Regular.ttf"); transition-property: opacity, translate; transition-duration: 0.25s; }
+.hud .hud-log-row.stagger--off { translate: 0 -12px; }
+.hud .hud-foot { font-size: 18px; opacity: 0.6; -unity-font: url("Fonts/Fredoka-Regular.ttf"); }
+
+.btn, .pill { -unity-text-align: middle-center; }
+.setting-label { -unity-text-align: middle-left; }

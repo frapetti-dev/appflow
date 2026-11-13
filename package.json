@@ -1,0 +1,22 @@
+{
+  "name": "com.fuji97.appflow",
+  "version": "0.1.0",
+  "displayName": "AppFlow",
+  "description": "App-level state machine (Splash, MainMenu, Game, ...) authored as a Graph Toolkit graph (.appflow): per-state scenes and behaviours, default flow, crossfade and custom transitions.",
+  "unity": "6000.7",
+  "license": "MIT",
+  "author": { "name": "fuji97", "url": "https://github.com/fuji97" },
+  "repository": { "type": "git", "url": "https://github.com/fuji97/appflow.git" },
+  "documentationUrl": "https://github.com/fuji97/appflow#readme",
+  "changelogUrl": "https://github.com/fuji97/appflow/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/fuji97/appflow/blob/main/LICENSE.md",
+  "keywords": ["state machine", "app flow", "graph toolkit", "scenes"],
+  "dependencies": { "com.unity.inputsystem": "6.7.0" },
+  "samples": [
+    {
+      "displayName": "Showcase",
+      "description": "UI Toolkit showcase: Splash > Main menu > Settings / Credits / Game > Pause, with default flow, crossfade and custom transitions. After import: add the sample's Scenes/*.unity to the Build Profile scene list, open Scenes/Boot.unity, press Play.",
+      "path": "Samples~/Showcase"
+    }
+  ]
+}

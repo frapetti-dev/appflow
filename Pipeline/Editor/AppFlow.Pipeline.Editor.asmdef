@@ -1,0 +1,29 @@
+{
+    "name": "AppFlow.Pipeline.Editor",
+    "rootNamespace": "AppFlow.Editor",
+    "references": [
+        "AppFlow.Runtime",
+        "AppFlow.Editor",
+        "Unity.Pipeline.Attributes",
+        "Unity.Pipeline.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "APPFLOW_PIPELINE"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.pipeline",
+            "expression": "",
+            "define": "APPFLOW_PIPELINE"
+        }
+    ],
+    "noEngineReferences": false
+}

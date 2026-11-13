@@ -1,0 +1,17 @@
+{
+    "name": "AppFlow.Sample",
+    "rootNamespace": "AppFlow.Sample",
+    "references": [
+        "AppFlow.Runtime",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="overlay" class="overlay" picking-mode="Ignore" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;">
+        <ui:VisualElement name="curtain" class="curtain curtain--up">
+            <ui:Label name="curtain-label" text="Loading..." />
+            <ui:VisualElement name="curtain-track" class="curtain-track">
+                <ui:VisualElement name="curtain-fill" class="curtain-fill" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="hud" class="hud" picking-mode="Ignore">
+            <ui:Label name="hud-state" class="hud-state" text="-" picking-mode="Ignore" />
+            <ui:VisualElement class="hud-row" picking-mode="Ignore">
+                <ui:Label name="hud-phase" class="hud-phase" text="-" picking-mode="Ignore" />
+            </ui:VisualElement>
+            <ui:Label name="hud-edge" class="hud-edge" text="" picking-mode="Ignore" />
+            <ui:VisualElement name="hud-log" class="hud-log" picking-mode="Ignore" />
+            <ui:Label class="hud-foot" text="F1 HUD  |  Esc back" picking-mode="Ignore" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

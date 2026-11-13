@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement class="screen bg--sunshine">
+        <ui:VisualElement class="blob blob--a" />
+        <ui:VisualElement class="blob blob--b" />
+        <ui:Label text="Credits" class="title" style="margin-bottom: 40px;" />
+        <ui:Label text="Built with AppFlow, a Graph Toolkit state machine" class="stagger body-text" />
+        <ui:Label text="Every screen is an App State with its own scene" class="stagger body-text" />
+        <ui:Label text="Font: Fredoka by Milena Brandão (SIL OFL 1.1)" class="stagger body-text" />
+        <ui:Label text="Thanks for playing!" class="stagger body-text" />
+        <ui:Button name="back" text="Back" class="btn btn--grape stagger" style="margin-top: 40px;" />
+    </ui:VisualElement>
+</ui:UXML>

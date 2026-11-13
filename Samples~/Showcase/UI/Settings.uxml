@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement class="screen bg--mint">
+        <ui:VisualElement class="blob blob--a" />
+        <ui:VisualElement class="blob blob--b" />
+        <ui:Label text="Settings" class="title" style="margin-bottom: 40px;" />
+        <ui:VisualElement class="row stagger">
+            <ui:Label text="Anim speed" class="setting-label" />
+            <ui:Button name="speed-slow" text="Slow" class="pill" />
+            <ui:Button name="speed-normal" text="Normal" class="pill" />
+            <ui:Button name="speed-fast" text="Fast" class="pill" />
+        </ui:VisualElement>
+        <ui:VisualElement class="row stagger">
+            <ui:Label text="HUD" class="setting-label" />
+            <ui:Button name="hud-on" text="On" class="pill" />
+            <ui:Button name="hud-off" text="Off" class="pill" />
+        </ui:VisualElement>
+        <ui:VisualElement class="row stagger">
+            <ui:Label text="Fullscreen" class="setting-label" />
+            <ui:Button name="fullscreen-on" text="On" class="pill" />
+            <ui:Button name="fullscreen-off" text="Off" class="pill" />
+        </ui:VisualElement>
+        <ui:Button name="back" text="Back" class="btn btn--coral stagger" style="margin-top: 40px;" />
+    </ui:VisualElement>
+</ui:UXML>
