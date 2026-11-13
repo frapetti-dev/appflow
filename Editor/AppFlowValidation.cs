@@ -57,8 +57,6 @@ namespace AppFlow.Editor
                         yield return new AppFlowIssue(true, "Only one Custom Transition per edge.", t);
                     if (customs.Any(c => c.Value == null))
                         yield return new AppFlowIssue(true, "Custom Transition has no behaviour asset.", t);
-                    if (customs.Count == 0 && !conditions.OfType<CrossfadeCondition>().Any())
-                        yield return new AppFlowIssue(false, "Edge has no effect: add a Custom Transition or Crossfade condition.", t);
                 }
         }
 
