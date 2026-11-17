@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Pipeline.Commands;
 using UnityEngine;
@@ -48,7 +49,7 @@ namespace AppFlow
                     id = s.Id.ToString(),
                     active = m.CurrentState != null && s.Id == currentId,
                     entry = s.Id == m.Asset.EntryStateId,
-                    scene = s.ScenePath,
+                    scene = s.Features.OfType<SceneFeature>().FirstOrDefault(f => f.Enabled)?.Scene.Path,
                     behaviour = s.Behaviour != null ? s.Behaviour.name : null,
                     customTransitionFromActive = edge?.Behaviour != null,
                     crossfadeFromActive = edge != null && edge.Crossfade,

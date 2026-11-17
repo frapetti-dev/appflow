@@ -3,11 +3,10 @@ using Unity.GraphToolkit.Editor;
 using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AppFlow.Editor
 {
-    [ScriptedImporter(3, AppFlowStateMachine.AssetExtension)]
+    [ScriptedImporter(5, AppFlowStateMachine.AssetExtension)]
     public sealed class AppFlowImporter : ScriptedImporter
     {
         public override void OnImportAsset(AssetImportContext ctx)
@@ -31,16 +30,17 @@ namespace AppFlow.Editor
                 // Keyed by state id so references in scenes/prefabs survive renames and reimports.
                 ctx.AddObjectToAsset("state-" + state.ID, stateRef);
 
-                var scene = state.Get<SceneAsset>(AppState.OptScene);
+                var features = state.Get<AppStateFeatures>(AppState.OptFeatures)?.Items?.Where(f => f != null).ToList() ?? new();
+                // The GUID survives scene moves/renames; the path the runtime loads is resolved here.
+                foreach (var sf in features.OfType<SceneFeature>())
+                    sf.Scene.Path = string.IsNullOrEmpty(sf.Scene.Guid) ? "" : AssetDatabase.GUIDToAssetPath(sf.Scene.Guid);
                 asset.States.Add(new AppStateData
                 {
                     Id = state.ID,
                     Name = state.StateName,
                     Ref = stateRef,
                     Behaviour = state.Get<AppStateBehaviour>(AppState.OptBehaviour),
-                    ScenePath = scene != null ? AssetDatabase.GetAssetPath(scene) : "",
-                    LoadMode = state.Get<LoadSceneMode>(AppState.OptLoadMode),
-                    UnloadOnExit = state.Get<bool>(AppState.OptUnloadOnExit),
+                    Features = features,
                 });
                 if (asset.EntryStateId == default && state.Get<bool>(AppState.OptEntry))
                     asset.EntryStateId = state.ID;

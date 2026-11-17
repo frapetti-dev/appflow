@@ -19,6 +19,7 @@ namespace AppFlow.Tests
         public void SetUp()
         {
             RecordingBehaviour.Log = new List<string>();
+            RecordingFeature.Updates = 0;
             RecordingBehaviour.ExitGate = null;
             RecordingBehaviour.ThrowInEnterOf = null;
             RecordingTransition.LastFrom = RecordingTransition.LastTo = null;
@@ -60,6 +61,29 @@ namespace AppFlow.Tests
             var m = Machine(MakeAsset());
             Assert.IsTrue(await m.Start());
             CollectionAssert.AreEqual(new[] { "A.PreEnter", "A.Enter", "A.PostEnter", "A.Running" }, RecordingBehaviour.Log);
+        }
+
+        [Test]
+        public async Task Features_WrapBehaviour_DisabledSkipped()
+        {
+            var asset = MakeAsset();
+            asset.States[0].Features.Add(new RecordingFeature());
+            asset.States[0].Features.Add(null); // renamed/deleted class deserializes as null and must be skipped
+            asset.States[0].Features.Add(new RecordingFeature { Enabled = false });
+            var m = Machine(asset);
+            Assert.IsTrue(await m.Start());
+            CollectionAssert.AreEqual(
+                new[] { "A.F.PreEnter", "A.PreEnter", "A.F.Enter", "A.Enter", "A.F.PostEnter", "A.PostEnter", "A.F.Running", "A.Running" },
+                RecordingBehaviour.Log);
+            m.Tick();
+            Assert.AreEqual(1, RecordingFeature.Updates);
+
+            RecordingBehaviour.Log.Clear();
+            Assert.IsTrue(await m.TransitTo(IdB));
+            CollectionAssert.IsSubsetOf(new[] { "A.PreExit", "A.F.PreExit", "A.Exit", "A.F.Exit", "A.PostExit", "A.F.PostExit" }, RecordingBehaviour.Log);
+            Assert.Less(RecordingBehaviour.Log.IndexOf("A.PreExit"), RecordingBehaviour.Log.IndexOf("A.F.PreExit"));
+            Assert.Less(RecordingBehaviour.Log.IndexOf("A.Exit"), RecordingBehaviour.Log.IndexOf("A.F.Exit"));
+            Assert.Less(RecordingBehaviour.Log.IndexOf("A.PostExit"), RecordingBehaviour.Log.IndexOf("A.F.PostExit"));
         }
 
         [Test]

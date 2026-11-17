@@ -1,7 +1,5 @@
 using System;
 using Unity.GraphToolkit.Editor;
-using UnityEditor;
-using UnityEngine.SceneManagement;
 
 namespace AppFlow.Editor
 {
@@ -12,9 +10,7 @@ namespace AppFlow.Editor
         public const string OptName = "Name";
         public const string OptEntry = "Entry";
         public const string OptBehaviour = "Behaviour";
-        public const string OptScene = "Scene";
-        public const string OptLoadMode = "LoadMode";
-        public const string OptUnloadOnExit = "UnloadOnExit";
+        public const string OptFeatures = "Features";
 
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
@@ -22,9 +18,7 @@ namespace AppFlow.Editor
             context.AddOption<string>(OptName).WithTooltip("State name used by code and CLI; shown as the state title").Build();
             context.AddOption<bool>(OptEntry).WithTooltip("Initial state entered on Start").Build();
             context.AddOption<AppStateBehaviour>(OptBehaviour).WithTooltip("Lifecycle hooks of this state").Build();
-            context.AddOption<SceneAsset>(OptScene).WithTooltip("Scene loaded in Enter").Build();
-            context.AddOption<LoadSceneMode>(OptLoadMode).WithDefaultValue(LoadSceneMode.Additive).Build();
-            context.AddOption<bool>(OptUnloadOnExit).WithDefaultValue(true).Build();
+            context.AddOption<AppStateFeatures>(OptFeatures).WithTooltip("Reusable lifecycle features (scene loading, ...) wrapped around the Behaviour, in list order").Build();
         }
 
         public override void OnEnable()

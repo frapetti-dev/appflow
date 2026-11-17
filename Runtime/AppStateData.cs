@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AppFlow
 {
@@ -11,8 +11,6 @@ namespace AppFlow
         public string Name;
         public AppStateRef Ref;
         public AppStateBehaviour Behaviour;
-        public string ScenePath;
-        public LoadSceneMode LoadMode;
-        public bool UnloadOnExit;
+        [SerializeReference] public List<AppStateFeature> Features = new();
     }
 }

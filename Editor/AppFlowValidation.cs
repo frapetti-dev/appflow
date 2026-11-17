@@ -39,13 +39,17 @@ namespace AppFlow.Editor
 
             foreach (var s in states)
             {
-                var scene = s.Get<SceneAsset>(AppState.OptScene);
-                if (scene == null) continue;
-                var path = AssetDatabase.GetAssetPath(scene);
-                if (!EditorBuildSettings.scenes.Any(b => b.enabled && b.path == path))
-                    yield return new AppFlowIssue(false, $"Scene '{path}' is not in the build scene list.", s);
-                if (s.Get<bool>(AppState.OptUnloadOnExit) && s.Get<LoadSceneMode>(AppState.OptLoadMode) == LoadSceneMode.Single)
-                    yield return new AppFlowIssue(false, "Unload on exit is ignored for Single-mode scenes.", s);
+                var features = s.Get<AppStateFeatures>(AppState.OptFeatures)?.Items;
+                if (features == null) continue;
+                foreach (var scene in features.OfType<SceneFeature>().Where(f => f.Enabled))
+                {
+                    var path = string.IsNullOrEmpty(scene.Scene.Guid) ? "" : AssetDatabase.GUIDToAssetPath(scene.Scene.Guid);
+                    if (path == "") continue;
+                    if (!EditorBuildSettings.scenes.Any(b => b.enabled && b.path == path))
+                        yield return new AppFlowIssue(false, $"Scene '{path}' is not in the build scene list.", s);
+                    if (scene.UnloadOnExit && scene.LoadMode == LoadSceneMode.Single)
+                        yield return new AppFlowIssue(false, "Unload on exit is ignored for Single-mode scenes.", s);
+                }
             }
 
             foreach (var s in states)

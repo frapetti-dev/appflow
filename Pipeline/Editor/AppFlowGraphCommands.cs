@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Unity.GraphToolkit.Editor;
@@ -91,6 +92,9 @@ namespace AppFlow.Editor
             if (code != ExitCode.Success) return code;
 
             foreach (var s in sm.GetStates().OfType<AppState>())
+            {
+                var features = s.Get<AppStateFeatures>(AppState.OptFeatures)?.Items ?? new List<AppStateFeature>();
+                var scene = features.OfType<SceneFeature>().FirstOrDefault();
                 cmd.Result.WriteRecord(new
                 {
                     kind = "state",
@@ -98,10 +102,12 @@ namespace AppFlow.Editor
                     id = s.ID.ToString(),
                     entry = s.Get<bool>(AppState.OptEntry),
                     behaviour = PathOf(s.Get<AppStateBehaviour>(AppState.OptBehaviour)),
-                    scene = PathOf(s.Get<SceneAsset>(AppState.OptScene)),
-                    loadMode = s.Get<LoadSceneMode>(AppState.OptLoadMode).ToString(),
-                    unloadOnExit = s.Get<bool>(AppState.OptUnloadOnExit),
+                    features = features.Select(f => f == null ? "(missing)" : f.GetType().Name + (f.Enabled ? "" : " (disabled)")).ToArray(),
+                    scene = scene != null && !string.IsNullOrEmpty(scene.Scene.Guid) ? AssetDatabase.GUIDToAssetPath(scene.Scene.Guid) : null,
+                    loadMode = scene?.LoadMode.ToString(),
+                    unloadOnExit = scene?.UnloadOnExit,
                 });
+            }
 
             foreach (var s in sm.GetStates().OfType<AppState>())
                 foreach (var t in s.GetOutgoingTransitions())
@@ -244,12 +250,12 @@ namespace AppFlow.Editor
             return ExitCode.Success;
         }
 
-        [CliGroupCommand(Group, "Set the scene a state loads (empty clears)." + Saves, Effect = CommandEffect.Idempotent, MainThreadRequired = true)]
+        [CliGroupCommand(Group, "Set the scene a state loads through its Scene feature (empty removes the feature)." + Saves, Effect = CommandEffect.Idempotent, MainThreadRequired = true)]
         internal static ExitCode SetScene(
             CommandContext cmd,
             [CliArg("asset", "Path of the .appflow asset", Required = true)] string asset,
             [CliArg("state", "State name or id", Required = true)] string state,
-            [CliArg("scene", "Asset path of a scene; empty clears")] string scene = "",
+            [CliArg("scene", "Asset path of a scene; empty removes the Scene feature")] string scene = "",
             [CliArg("load-mode", "Single or Additive")] LoadSceneMode loadMode = LoadSceneMode.Additive,
             [CliArg("unload-on-exit", "Unload an additive scene when the state exits")] bool unloadOnExit = true)
         {
@@ -261,9 +267,26 @@ namespace AppFlow.Editor
             sm.UndoBeginRecordStateMachine("set_scene");
             try
             {
-                s.GetOptionByName(AppState.OptScene).TrySetValue(obj);
-                s.GetOptionByName(AppState.OptLoadMode).TrySetValue(loadMode);
-                s.GetOptionByName(AppState.OptUnloadOnExit).TrySetValue(unloadOnExit);
+                // A fresh container so the option registers the change.
+                var items = new List<AppStateFeature>(s.Get<AppStateFeatures>(AppState.OptFeatures)?.Items ?? new List<AppStateFeature>());
+                var index = items.FindIndex(f => f is SceneFeature);
+                if (obj == null)
+                {
+                    if (index >= 0) items.RemoveAt(index);
+                }
+                else
+                {
+                    var path = PathOf(obj);
+                    var feature = new SceneFeature
+                    {
+                        Scene = new SceneReference { Guid = AssetDatabase.AssetPathToGUID(path), Path = path },
+                        LoadMode = loadMode,
+                        UnloadOnExit = unloadOnExit,
+                    };
+                    if (index >= 0) items[index] = feature;
+                    else items.Insert(0, feature);
+                }
+                s.GetOptionByName(AppState.OptFeatures).TrySetValue(new AppStateFeatures { Items = items });
                 StateMachineDatabase.SaveStateMachine(sm);
             }
             finally { sm.UndoEndRecordStateMachine(); }

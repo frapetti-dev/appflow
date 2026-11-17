@@ -10,7 +10,8 @@ Package Manager > `+` > "Install package from git URL" > `https://github.com/fuj
 
 1. `Assets > Create > App Flow > App Flow Graph`. Add `App State` nodes. Per state, in the Graph Inspector:
    - **Name**: unique, used by code and CLI (Graph Toolkit does not persist `State.Title` set from code, so the name is an option and drives the title).
-   - **Entry**: exactly one. **Behaviour**: an `AppStateBehaviour` asset. **Scene** / **LoadMode** / **UnloadOnExit**: loaded in `Enter`, unloaded after `Exit`.
+   - **Entry**: exactly one. **Behaviour**: an `AppStateBehaviour` asset.
+   - **Features**: post-processing-style list ("Add Feature" lists every non-abstract `AppStateFeature` subclass in the project; header checkbox enables, `⋮` resets/removes/reorders). Built-in: **Scene** (Scene / LoadMode / UnloadOnExit: loaded in `Enter`, unloaded in `Exit`) and **Log**. Features wrap the behaviour: they run before it in PreEnter/Enter/PostEnter/Running and after it in PreExit/Exit/PostExit, in list order.
 2. An edge A→B can customize how that pair transitions. Add a `Custom Transition` condition (an `AppTransitionBehaviour` asset) and/or `Crossfade`. An edge with neither uses the default flow.
 3. Put an `AppFlowRunner` in the boot scene and assign the `.appflow` asset (its main object is an `AppFlowAsset`).
 4. Move by reference: `[SerializeField] AppStateRef next;` (sub-asset of the `.appflow`), then `await AppFlowRunner.Active.Machine.TransitTo(next)`.
