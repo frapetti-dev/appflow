@@ -133,6 +133,8 @@ namespace AppFlow.Editor
             root.TrackPropertyValue(property.FindPropertyRelative(nameof(AppStateSettings.Entry)), _ => RefreshEntry());
 
             // ---- behaviour ----
+            var targetPath = AssetDatabase.GetAssetPath(property.serializedObject.targetObject);
+            var createDir = targetPath == "" ? "Assets" : System.IO.Path.GetDirectoryName(targetPath).Replace('\\', '/');
             var behaviour = SectionFoldout("Behaviour");
             var behaviourRow = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
             behaviourRow.Add(new PropertyField(behaviourProp, "") { style = { flexGrow = 1 } });
@@ -142,11 +144,67 @@ namespace AppFlow.Editor
                     AssetDatabase.OpenAsset(MonoScript.FromScriptableObject(so));
             }) { text = "Edit Script", style = { marginRight = 0 } };
             behaviourRow.Add(editScript);
+            var createButton = new Button { text = "Create", tooltip = "Create a behaviour asset or a new behaviour script", style = { marginRight = 0 } };
+            behaviourRow.Add(createButton);
             behaviour.Add(behaviourRow);
             root.Add(behaviour);
-            void RefreshEdit() => editScript.SetEnabled(behaviourProp.objectReferenceValue != null);
-            RefreshEdit();
-            root.TrackPropertyValue(property.FindPropertyRelative(nameof(AppStateSettings.Behaviour)), _ => RefreshEdit());
+
+            void CreateAsset(Type t)
+            {
+                var path = EditorUtility.SaveFilePanelInProject("Create App State Behaviour", $"{nameProp.stringValue}{t.Name}", "asset", "Choose where to save the behaviour asset", createDir);
+                if (path == "") return;
+                var so = ScriptableObject.CreateInstance(t);
+                AssetDatabase.CreateAsset(so, path);
+                AssetDatabase.SaveAssets();
+                behaviourProp.objectReferenceValue = so;
+                property.serializedObject.ApplyModifiedProperties();
+            }
+
+            void CreateScript()
+            {
+                var path = EditorUtility.SaveFilePanelInProject("New App State Behaviour Script", $"{nameProp.stringValue}StateBehaviour", "cs", "Choose where to save the script", createDir);
+                if (path == "") return;
+                var className = System.IO.Path.GetFileNameWithoutExtension(path);
+                if (!System.Text.RegularExpressions.Regex.IsMatch(className, "^[A-Za-z_][A-Za-z0-9_]*$"))
+                {
+                    EditorUtility.DisplayDialog("Invalid class name", $"'{className}' is not a valid C# class name.", "OK");
+                    return;
+                }
+                // No namespace: compiles into whichever assembly owns the chosen folder.
+                System.IO.File.WriteAllText(path,
+                    "#pragma warning disable CS1998 // hooks are async; await what you need\n" +
+                    "using AppFlow;\n" +
+                    "using UnityEngine;\n\n" +
+                    $"public class {className} : AppStateBehaviour\n" +
+                    "{\n" +
+                    "    public override async Awaitable OnEnter(AppTransitionContext ctx) { }\n\n" +
+                    "    public override async Awaitable OnExit(AppTransitionContext ctx) { }\n" +
+                    "}\n");
+                AssetDatabase.ImportAsset(path);
+                AssetDatabase.OpenAsset(AssetDatabase.LoadAssetAtPath<MonoScript>(path));
+            }
+
+            createButton.clicked += () =>
+            {
+                var types = TypeCache.GetTypesDerivedFrom<AppStateBehaviour>()
+                    .Where(t => !t.IsAbstract && !t.IsGenericType).OrderBy(t => t.Name).ToList();
+                var menu = new GenericMenu();
+                if (types.Count == 0) menu.AddDisabledItem(new GUIContent("No AppStateBehaviour types found"));
+                foreach (var t in types)
+                    menu.AddItem(new GUIContent(ObjectNames.NicifyVariableName(t.Name)), false, () => CreateAsset(t));
+                menu.AddSeparator("");
+                menu.AddItem(new GUIContent("New Script…"), false, CreateScript);
+                menu.DropDown(createButton.worldBound);
+            };
+
+            void RefreshBehaviourButtons()
+            {
+                var has = behaviourProp.objectReferenceValue != null;
+                editScript.style.display = has ? DisplayStyle.Flex : DisplayStyle.None;
+                createButton.style.display = has ? DisplayStyle.None : DisplayStyle.Flex;
+            }
+            RefreshBehaviourButtons();
+            root.TrackPropertyValue(property.FindPropertyRelative(nameof(AppStateSettings.Behaviour)), _ => RefreshBehaviourButtons());
 
             // ---- parallel phases ----
             var parallel = SectionFoldout("Parallel phases");
@@ -295,8 +353,6 @@ namespace AppFlow.Editor
             root.Bind(property.serializedObject);
 
             // ---- live phase (Play mode), mirrors AppStateView ----
-            var targetPath = AssetDatabase.GetAssetPath(property.serializedObject.targetObject);
-
             bool Matches(AppFlowMachine machine, AppStateRef stateRef)
             {
                 if (stateRef == null || stateRef.name != nameProp.stringValue) return false;
