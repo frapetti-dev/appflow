@@ -20,6 +20,21 @@ Package Manager > `+` > "Install package from git URL" > `https://github.com/fuj
 
 `AppPhase`: PreEnter, Enter, PostEnter, Running, PreExit, Exit, PostExit. Default flow A→B: `A.PreExit, B.PreEnter, A.Exit, B.Enter, A.PostExit, B.PostEnter`, then `B.Running`. Crossfade starts `A.Exit` and `B.Enter` together. A custom transition receives `AppTransitionContext` (both states) and calls the step helpers (`ctx.PreExit()`, `ctx.Enter()`, `ctx.RunDefault()` ...) in any order. A second `TransitTo` while one runs is rejected (returns false, warning). Hook exceptions are logged and the transition continues.
 
+## Features
+
+A feature is a `[Serializable]` subclass of `AppStateFeature`; it appears in "Add Feature" automatically (one instance per type per state). Its serialized fields are drawn in its foldout; `Machine` and `State` are set at runtime. Each machine gets its own copy, so runtime changes never touch the asset.
+
+```csharp
+[Serializable]
+public sealed class MusicFeature : AppStateFeature
+{
+    public AudioClip Clip;
+    public override async Awaitable OnEnter(AppTransitionContext ctx) => MusicPlayer.Play(Clip);
+}
+```
+
+Hooks match `AppStateBehaviour` (`OnPreEnter` … `OnPostExit`, `OnRunning`, `OnRunningUpdate`). Exceptions are logged per feature and do not stop the others. Renaming a feature class loses its data (the inspector shows "Missing feature") unless you add `[UnityEngine.Scripting.APIUpdating.MovedFrom]`.
+
 ## CLI (optional)
 
 Requires `com.unity.pipeline`; the `AppFlow.Pipeline*` assemblies compile only when it is installed.

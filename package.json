@@ -2,7 +2,7 @@
   "name": "com.fuji97.appflow",
   "version": "0.1.0",
   "displayName": "AppFlow",
-  "description": "App-level state machine (Splash, MainMenu, Game, ...) authored as a Graph Toolkit graph (.appflow): per-state scenes and behaviours, default flow, crossfade and custom transitions.",
+  "description": "App-level state machine (Splash, MainMenu, Game, ...) authored as a Graph Toolkit graph (.appflow): per-state behaviours and features (scene loading, ...), default flow, crossfade and custom transitions.",
   "unity": "6000.7",
   "license": "MIT",
   "author": { "name": "fuji97", "url": "https://github.com/fuji97" },
