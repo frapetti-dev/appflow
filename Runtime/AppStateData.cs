@@ -11,6 +11,7 @@ namespace AppFlow
         public string Name;
         public AppStateRef Ref;
         public AppStateBehaviour Behaviour;
+        public bool ParallelPre, ParallelEnter, ParallelExit, ParallelPost;
         [SerializeReference] public List<AppStateFeature> Features = new();
     }
 }

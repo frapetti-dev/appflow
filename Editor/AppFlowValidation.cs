@@ -27,7 +27,7 @@ namespace AppFlow.Editor
         {
             var states = sm.GetStates().OfType<AppState>().ToList();
 
-            var entries = states.Where(s => s.Get<bool>(AppState.OptEntry)).ToList();
+            var entries = states.Where(s => s.Settings.Entry).ToList();
             if (entries.Count == 0)
                 yield return new AppFlowIssue(true, "No Entry state: tick 'Entry' on one state.", null);
             for (var i = 1; i < entries.Count; i++)
@@ -39,7 +39,7 @@ namespace AppFlow.Editor
 
             foreach (var s in states)
             {
-                var features = s.Get<AppStateFeatures>(AppState.OptFeatures)?.Items;
+                var features = s.Settings.Features;
                 if (features == null) continue;
                 foreach (var scene in features.OfType<SceneFeature>().Where(f => f.Enabled))
                 {
@@ -61,6 +61,8 @@ namespace AppFlow.Editor
                         yield return new AppFlowIssue(true, "Only one Custom Transition per edge.", t);
                     if (customs.Any(c => c.Value == null))
                         yield return new AppFlowIssue(true, "Custom Transition has no behaviour asset.", t);
+                    if (conditions.OfType<PhaseModeCondition>().Count() > 1)
+                        yield return new AppFlowIssue(true, "Only one Phase Mode per edge.", t);
                 }
         }
 

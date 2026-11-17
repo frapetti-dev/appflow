@@ -109,6 +109,8 @@ namespace AppFlow
             return false;
         }
 
+        static bool Resolve(AppPhaseMode mode, bool both) => mode == AppPhaseMode.Inherit ? both : mode == AppPhaseMode.Parallel;
+
         async Awaitable<bool> Run(StateEntry to)
         {
             if (IsTransitioning)
@@ -120,17 +122,22 @@ namespace AppFlow
             IsTransitioning = true;
             var from = CurrentState != null ? m_States[CurrentState.StateId] : null;
             var edge = from != null ? Asset.FindTransition(from.Data.Id, to.Data.Id) : null;
+            var f = from?.Data;
+            var t = to.Data;
+            var modes = edge?.Modes ?? default;
             var record = new AppTransitionRecord
             {
                 From = from?.Data.Name,
                 To = to.Data.Name,
                 Custom = edge?.Behaviour != null,
-                Crossfade = edge != null && edge.Crossfade,
+                ParallelPre = Resolve(modes.Pre, f != null && f.ParallelPre && t.ParallelPre),
+                ParallelMain = Resolve(modes.Main, f != null && f.ParallelExit && t.ParallelEnter),
+                ParallelPost = Resolve(modes.Post, f != null && f.ParallelPost && t.ParallelPost),
                 StartedAt = Time.realtimeSinceStartupAsDouble,
             };
             m_Active = record;
             if (edge != null) EdgeTransitionStarted?.Invoke(edge);
-            var ctx = new AppTransitionContext(this, from, to, record.Crossfade, record);
+            var ctx = new AppTransitionContext(this, from, to, record);
 
             try
             {
@@ -143,7 +150,7 @@ namespace AppFlow
                 }
                 else
                 {
-                    await ctx.RunDefault(record.Crossfade);
+                    await ctx.RunDefault();
                 }
 
                 // Running is always reached, even if a custom transition skipped every target phase.

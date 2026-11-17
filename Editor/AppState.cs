@@ -7,44 +7,39 @@ namespace AppFlow.Editor
     [State("App Flow", AppFlowIcons.State, "App State")]
     public sealed class AppState : State
     {
-        public const string OptName = "Name";
-        public const string OptEntry = "Entry";
-        public const string OptBehaviour = "Behaviour";
-        public const string OptFeatures = "Features";
+        public const string OptSettings = "Settings";
 
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
-            // State.Title set from code is not persisted by Graph Toolkit, so the name lives in an option.
-            context.AddOption<string>(OptName).WithTooltip("State name used by code and CLI; shown as the state title").Build();
-            context.AddOption<bool>(OptEntry).WithTooltip("Initial state entered on Start").Build();
-            context.AddOption<AppStateBehaviour>(OptBehaviour).WithTooltip("Lifecycle hooks of this state").Build();
-            context.AddOption<AppStateFeatures>(OptFeatures).WithTooltip("Reusable lifecycle features (scene loading, ...) wrapped around the Behaviour, in list order").Build();
+            context.AddOption<AppStateSettings>(OptSettings).WithTooltip("State settings").Build();
         }
 
         public override void OnEnable()
         {
             base.OnEnable();
-            var name = Get<string>(OptName);
+            // State.Title set from code is not persisted by Graph Toolkit, so the name lives in the Settings option.
+            var name = Settings.Name;
             if (!string.IsNullOrEmpty(name)) Title = name;
         }
 
-        /// <summary>The Name option, else the title typed in the graph.</summary>
+        /// <summary>The Settings name, else the title typed in the graph.</summary>
         public string StateName
         {
             get
             {
-                var name = Get<string>(OptName);
+                var name = Settings.Name;
                 return string.IsNullOrEmpty(name) ? Title : name;
             }
         }
 
         public static string NameOf(IState state) => state is AppState a ? a.StateName : state.Title;
 
-        public T Get<T>(string option)
+        /// <summary>Stored settings, or a fresh default when the option was never set. Mutate a Clone() and pass it to SetSettings.</summary>
+        public AppStateSettings Settings
         {
-            T value = default;
-            GetOptionByName(option)?.TryGetValue(out value);
-            return value;
+            get { AppStateSettings v = null; GetOptionByName(OptSettings)?.TryGetValue(out v); return v ?? new AppStateSettings(); }
         }
+
+        public void SetSettings(AppStateSettings value) => GetOptionByName(OptSettings).TrySetValue(value);
     }
 }

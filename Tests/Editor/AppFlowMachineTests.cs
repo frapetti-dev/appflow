@@ -99,9 +99,9 @@ namespace AppFlow.Tests
         }
 
         [Test]
-        public async Task CrossfadeEdge_StartsExitAndEnterTogether()
+        public async Task PhaseModeEdge_ParallelMain_StartsExitAndEnterTogether()
         {
-            var m = Machine(MakeAsset(new AppTransitionData { From = IdA, To = IdB, Crossfade = true }));
+            var m = Machine(MakeAsset(new AppTransitionData { From = IdA, To = IdB, Modes = new AppPhaseModes { Main = AppPhaseMode.Parallel } }));
             await m.Start();
             RecordingBehaviour.Log.Clear();
             RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
@@ -113,6 +113,139 @@ namespace AppFlow.Tests
             RecordingBehaviour.ExitGate.SetResult();
             Assert.IsTrue(await transition);
             Assert.AreEqual("B.Running", RecordingBehaviour.Log[^1]);
+        }
+
+        [Test]
+        public async Task BothStatesParallel_RunsGroupsTogether()
+        {
+            var asset = MakeAsset();
+            SetParallel(asset.States[0], true, true, true);
+            SetParallel(asset.States[1], true, true, true);
+            var m = Machine(asset);
+            await m.Start();
+            RecordingBehaviour.Log.Clear();
+            RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
+
+            var transition = m.TransitTo(IdB);
+            Assert.Contains("B.Enter", RecordingBehaviour.Log, "B.Enter must start while A.Exit is still pending");
+
+            RecordingBehaviour.ExitGate.SetResult();
+            Assert.IsTrue(await transition);
+            var r = m.History[^1];
+            Assert.IsTrue(r.ParallelPre && r.ParallelMain && r.ParallelPost);
+        }
+
+        [Test]
+        public async Task OneStateParallel_StaysSequential()
+        {
+            var asset = MakeAsset();
+            SetParallel(asset.States[0], true, true, true);
+            var m = Machine(asset);
+            await m.Start();
+            RecordingBehaviour.Log.Clear();
+            RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
+
+            var transition = m.TransitTo(IdB);
+            CollectionAssert.DoesNotContain(RecordingBehaviour.Log, "B.Enter");
+
+            RecordingBehaviour.ExitGate.SetResult();
+            Assert.IsTrue(await transition);
+            CollectionAssert.AreEqual(
+                new[] { "A.PreExit", "B.PreEnter", "A.Exit", "B.Enter", "A.PostExit", "B.PostEnter", "B.Running" },
+                RecordingBehaviour.Log);
+            var r = m.History[^1];
+            Assert.IsFalse(r.ParallelPre || r.ParallelMain || r.ParallelPost);
+        }
+
+        [Test]
+        public async Task StateFlags_ApplyPerGroupAndNeedBothStates()
+        {
+            var asset = MakeAsset();
+            SetParallel(asset.States[0], true, true, false);
+            SetParallel(asset.States[1], false, true, true);
+            var m = Machine(asset);
+            await m.Start();
+            RecordingBehaviour.Log.Clear();
+            RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
+
+            var transition = m.TransitTo(IdB);
+            Assert.Contains("B.Enter", RecordingBehaviour.Log, "Main is flagged on both states");
+
+            RecordingBehaviour.ExitGate.SetResult();
+            Assert.IsTrue(await transition);
+            var r = m.History[^1];
+            Assert.IsFalse(r.ParallelPre);
+            Assert.IsTrue(r.ParallelMain);
+            Assert.IsFalse(r.ParallelPost);
+        }
+
+        [Test]
+        public async Task MainGroup_NeedsLeavingExitAndEnteringEnter()
+        {
+            var asset = MakeAsset();
+            asset.States[0].ParallelExit = true;
+            asset.States[1].ParallelEnter = true;
+            var m = Machine(asset);
+            await m.Start();
+            RecordingBehaviour.Log.Clear();
+            RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
+
+            var transition = m.TransitTo(IdB);
+            Assert.Contains("B.Enter", RecordingBehaviour.Log, "A has Exit parallel and B has Enter parallel");
+
+            RecordingBehaviour.ExitGate.SetResult();
+            Assert.IsTrue(await transition);
+            var r = m.History[^1];
+            Assert.IsTrue(r.ParallelMain);
+            Assert.IsFalse(r.ParallelPre || r.ParallelPost);
+        }
+
+        [Test]
+        public async Task MainGroup_WrongSidesStaysSequential()
+        {
+            var asset = MakeAsset();
+            asset.States[0].ParallelEnter = true;
+            asset.States[1].ParallelExit = true;
+            var m = Machine(asset);
+            await m.Start();
+            RecordingBehaviour.Log.Clear();
+            RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
+
+            var transition = m.TransitTo(IdB);
+            CollectionAssert.DoesNotContain(RecordingBehaviour.Log, "B.Enter");
+
+            RecordingBehaviour.ExitGate.SetResult();
+            Assert.IsTrue(await transition);
+            Assert.IsFalse(m.History[^1].ParallelMain);
+        }
+
+        static void SetParallel(AppStateData s, bool pre, bool main, bool post)
+        {
+            s.ParallelPre = pre;
+            s.ParallelEnter = main;
+            s.ParallelExit = main;
+            s.ParallelPost = post;
+        }
+
+        [Test]
+        public async Task PhaseModeEdge_SequentialOverridesParallelStates()
+        {
+            var asset = MakeAsset(new AppTransitionData { From = IdA, To = IdB, Modes = new AppPhaseModes { Main = AppPhaseMode.Sequential } });
+            SetParallel(asset.States[0], true, true, true);
+            SetParallel(asset.States[1], true, true, true);
+            var m = Machine(asset);
+            await m.Start();
+            RecordingBehaviour.Log.Clear();
+            RecordingBehaviour.ExitGate = new AwaitableCompletionSource();
+
+            var transition = m.TransitTo(IdB);
+            CollectionAssert.DoesNotContain(RecordingBehaviour.Log, "B.Enter");
+
+            RecordingBehaviour.ExitGate.SetResult();
+            Assert.IsTrue(await transition);
+            var r = m.History[^1];
+            Assert.IsTrue(r.ParallelPre && r.ParallelPost);
+            Assert.IsFalse(r.ParallelMain);
         }
 
         [Test]
